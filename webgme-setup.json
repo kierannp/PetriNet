@@ -1,4 +1,33 @@
 {
-  "components": {},
-  "dependencies": {}
+  "components": {
+    "plugins": {
+      "JSPlug": {
+        "src": "src/plugins/JSPlug",
+        "test": "test/plugins/JSPlug"
+      },
+      "PythonPlug": {
+        "src": "src/plugins/PythonPlug",
+        "test": "test/plugins/PythonPlug"
+      }
+    },
+    "visualizers": {
+      "PetriViz": {
+        "src": "panels/PetriViz/PetriVizPanel",
+        "title": "PetriViz",
+        "panel": "src/visualizers/panels/PetriViz",
+        "secondary": false,
+        "widget": "src/visualizers/widgets/PetriViz"
+      }
+    },
+    "seeds": {
+      "PetSeed": {
+        "src": "src/seeds/PetSeed"
+      }
+    }
+  },
+  "dependencies": {
+    "plugins": {},
+    "visualizers": {},
+    "seeds": {}
+  }
 }

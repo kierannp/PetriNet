@@ -95,7 +95,7 @@ class PythonPlug(PluginBase):
         return True
       else:
         return False
-      
+    
     self.send_notification('Your model is classified as:\
       \n Workflow: {}\n FreeChoice: {}\n Marked: {}\n StateMachine: {}'.format(\
       checkWorkflow(p2t, t2p),\

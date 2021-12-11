@@ -13,7 +13,6 @@ define(['jointjs','css!./styles/PetriVizWidget.css'], function (joint) {
         this._logger = logger.fork('Widget');
 
         this._el = container;
-
         this.nodes = {};
         this._initialize();
 
@@ -24,19 +23,26 @@ define(['jointjs','css!./styles/PetriVizWidget.css'], function (joint) {
         var width = this._el.width(),
             height = this._el.height(),
             self = this;
-
         // set widget class
         this._el.addClass(WIDGET_CLASS);
-
-        // Create a dummy header
-        this._el.append('<h3>PetriViz Events:</h3>');
-
-        // Registering to events can be done with jQuery (as normal)
-        this._el.on('dblclick', function (event) {
-            event.stopPropagation();
-            event.preventDefault();
-            self.onBackgroundDblClick();
+        this._jointPetri = new joint.dia.Graph;
+        this._jointPaper = new joint.dia.Paper({
+            el: this._el,
+            width : width,
+            height: height,
+            model: this._jointPetri,
+            interactive: true
         });
+        // add event calls to elements
+        this._jointPaper.on('element:pointerdblclick', function(elementView) {
+            const currentElement = elementView.model;
+            if (self._webgmePetri){
+                if (self._webgmePetri.id2transtions[currentElement.id] in self._webgmePetri.fireableTrans) {
+                    self._setState(self._webgmePetri.id2transtions[currentElement.id]);
+                }
+            }
+        });
+        this._webgmePetri = null;
     };
 
     PetriVizWidget.prototype.onWidgetContainerResize = function (width, height) {
@@ -78,13 +84,246 @@ define(['jointjs','css!./styles/PetriVizWidget.css'], function (joint) {
 
     /* * * * * * * * Visualizer event handlers * * * * * * * */
 
-    PetriVizWidget.prototype.onNodeClick = function (/*id*/) {
-        // This currently changes the active node to the given id and
-        // this is overridden in the controller.
+    // PetriVizWidget.prototype.onNodeClick = function (/*id*/) {
+    //     // This currently changes the active node to the given id and
+    //     // this is overridden in the controller.
+    // };
+
+    // PetriVizWidget.prototype.onBackgroundDblClick = function () {
+    //     this._el.append('<div>Background was double-clicked!!</div>');
+    // };
+
+    // State Machine manipulating functions called from the controller
+    PetriVizWidget.prototype.initPetri = function (petriDescriptor) {
+        const self = this;
+        self._webgmePetri = petriDescriptor;
+        self._jointPetri.clear();
+        const petri = self._webgmePetri;
+        petri.id2place = {};
+        petri.id2transtions = {};
+
+        // first add the places
+        Object.keys(petri.places).forEach(placeId => {
+            let vertex = null;
+            vertex = new joint.shapes.standard.Circle({
+                position: petri.places[placeId].position,
+                size: { width: 60, height: 60 },
+                attrs: {
+                    label : {
+                        text: petri.places[placeId].tokens,
+                        //event: 'element:label:pointerdown',
+                        fontWeight: 'bold',
+                        cursor: 'text',
+                        //style: {
+                        //    userSelect: 'text'
+                        //}
+                    },
+                    body: {
+                        strokeWidth: 2,
+                        cursor: 'pointer'
+                    }
+                },
+            tokens: petri.places[placeId].tokens
+            });
+            vertex.addTo(self._jointPetri);
+            petri.places[placeId].joint = vertex;
+            petri.id2place[vertex.id] = placeId;
+        });
+
+        //second add the transtions
+        Object.keys(petri.transitions).forEach(transId => {
+            let vertex = null;
+            vertex = new joint.shapes.standard.Rectangle({
+                position: petri.transitions[transId].position,
+                size: { width: 20, height: 60 },
+                attrs: {
+                    label : {
+                        // text: petri.transitions[transId].name,
+                        //event: 'element:label:pointerdown',
+                        fontWeight: 'bold',
+                        cursor: 'pointer',
+                        //style: {
+                        //    userSelect: 'text'
+                        //}
+                    },
+                    body: {
+                        strokeWidth: 2,
+                        cursor: 'pointer'
+                    }
+                }
+            });
+            vertex.addTo(self._jointPetri);
+            petri.transitions[transId].joint = vertex;
+            petri.id2transtions[vertex.id] = transId;
+        });
+
+        // then create the links place to transtion
+        Object.keys(petri.places).forEach(placeId => {
+            Object.values(petri.places[placeId].transitions).forEach(transId => {
+                console.log(petri.places[placeId]);
+                petri.places[placeId].jointArc = petri.places[placeId].jointArc || {};
+                const link = new joint.shapes.standard.Link({
+                    source: {id: petri.places[placeId].joint.id},
+                    target: {id: petri.transitions[petri.places[placeId].transitions[transId]].joint.id},
+                    attrs: {
+                        line: {
+                            strokeWidth: 2
+                        },
+                        wrapper: {
+                            cursor: 'default'
+                        }
+                    },
+                    labels: [{
+                        position: {
+                            distance: 0.5,
+                            offset: 0,
+                            args: {
+                                keepGradient: true,
+                                ensureLegibility: true
+                            }
+                        },
+                        attrs: {
+                            text: {
+                                fontWeight: 'bold'
+                            }
+                        }
+                    }]
+                });
+                link.addTo(self._jointPetri);
+                petri.places[placeId].jointArc[transId] = link;
+            })
+        });
+
+        // then create the links transition to place
+        Object.keys(petri.transitions).forEach(transId => {
+            Object.values(petri.transitions[transId].places).forEach(placeId => {
+                petri.transitions[transId].jointArc = petri.transitions[transId].jointArc || {};
+                const link = new joint.shapes.standard.Link({
+                    source: {id: petri.transitions[transId].joint.id},
+                    target: {id: petri.places[petri.transitions[transId].places[placeId]].joint.id},
+                    attrs: {
+                        line: {
+                            strokeWidth: 2
+                        },
+                        wrapper: {
+                            cursor: 'default'
+                        }
+                    },
+                    labels: [{
+                        position: {
+                            distance: 0.5,
+                            offset: 0,
+                            args: {
+                                keepGradient: true,
+                                ensureLegibility: true
+                            }
+                        },
+                        attrs: {
+                            text: {
+                                fontWeight: 'bold'
+                            }
+                        }
+                    }]
+                });
+                link.addTo(self._jointPetri);
+                petri.transitions[transId].jointArc[placeId] = link;
+            })
+        });
+
+        //now refresh the visualization
+        self._jointPaper.updateViews();
+        self._decorateMachine();
+        if (Object.keys(petri.fireableTrans).length == 0){
+            alert('Network is Deadlocked!');
+        }
     };
 
-    PetriVizWidget.prototype.onBackgroundDblClick = function () {
-        this._el.append('<div>Background was double-clicked!!</div>');
+    PetriVizWidget.prototype.destroyMachine = function () {
+
+    };
+
+    // PetriVizWidget.prototype.fireEvent = function (transId) {
+    //     const petri = this._webgmePetri
+    //     Object.keys(petri.transitions[transId].places).forEach(placeId => {
+    //         const link = petri.transtions[transId].jointArc[placeId];
+    //         const linkView = link.findView(self._jointPaper);
+    //         linkView.sendToken(joint.V('circle', { r: 10, fill: 'black' }), {duration:1000}, function() {
+    //             // this.initPetri();
+    //             // this._decorateMachine();
+    //         });
+    //     });
+    // };
+
+    PetriVizWidget.prototype.fireTokens = function (places) {
+        const petri = this._webgmePetri
+        Object.keys(places.inplaces).forEach(placeId => {
+            const link = petri.places[placeId].jointArc[places.fired];
+            const linkView = link.findView(this._jointPaper);
+            linkView.sendToken(joint.V('circle', { r: 5, fill: 'black' }), {duration:500});
+        });
+        Object.keys(places.outplaces).forEach(placeId => {
+            const link = petri.transitions[places.fired].jointArc[placeId];
+            const linkView = link.findView(this._jointPaper);
+            linkView.sendToken(joint.V('circle', { r: 5, fill: 'black' }), {duration:500});
+        });
+    };
+
+    PetriVizWidget.prototype._decorateMachine = function() {
+        const petri = this._webgmePetri;
+        Object.keys(petri.places).forEach(placeId => {
+            petri.places[placeId].joint.attr('label/text', petri.places[placeId].tokens);
+        });
+        Object.keys(petri.transitions).forEach(transId => {
+            petri.transitions[transId].joint.attr('body/fill', 'white');
+        });
+        Object.keys(petri.fireableTrans).forEach(transId => {
+            petri.transitions[transId].joint.attr('body/fill', 'black');
+        });
+    };
+
+    PetriVizWidget.prototype._setState = function(firedTrans) {
+        const petri = this._webgmePetri;
+        const places = { inplaces:{}, outplaces:{}, fired: firedTrans }
+
+        //decremetn places
+        Object.keys(petri.places).forEach( placeId => {
+            Object.values(petri.places[placeId].transitions).forEach(transId => {
+                if (transId === firedTrans){
+                    petri.places[placeId].tokens -= 1;
+                    places.inplaces[placeId] = placeId;
+                }
+            });
+        });
+
+        //increment places
+        Object.values(petri.transitions[firedTrans].places).forEach(placeId => {
+            petri.places[placeId].tokens += 1;
+            places.outplaces[placeId] = placeId;
+        });
+
+        //determine fireability of transitions
+        Object.keys(petri.transitions).forEach( transId => {
+            petri.transitions[transId].fireable = true;
+        });
+        Object.keys(petri.places).forEach( placeId => {
+            if (petri.places[placeId].tokens === 0){
+                Object.values(petri.places[placeId].transitions).forEach( transId => {
+                    petri.transitions[transId].fireable = false;
+                });
+            }
+        });
+        petri.fireableTrans = {};
+        Object.keys(petri.transitions).forEach( transId => {
+            if (petri.transitions[transId].fireable == true){
+                petri.fireableTrans[transId] = transId;
+            }
+        });
+
+        this.fireTokens(places);
+        this._decorateMachine();
+        if (Object.keys(petri.fireableTrans).length == 0){
+            alert('Network is Deadlocked!');
+        }
     };
 
     /* * * * * * * * Visualizer life cycle callbacks * * * * * * * */

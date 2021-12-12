@@ -8,10 +8,10 @@ Petri nets have been extensively used to describe discrete-event distributed sys
 
 ## Installation
 
-To install run 
+To install run: 
 - Change the BASE_DIR in .env
--`docker-compose build`
--`docker-compose up -d` x 2
+- `docker-compose build`
+- `docker-compose up -d` x 2
 
 Connect to the server at http://localhost:8888
 

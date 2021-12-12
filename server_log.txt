@@ -1,0 +1,66 @@
+Attaching to wdestup_webgme_1
+[36mwebgme_1  |[0m 
+[36mwebgme_1  |[0m > statemachinejoint@1.0.0 start /usr/app
+[36mwebgme_1  |[0m > node app.js
+[36mwebgme_1  |[0m 
+[36mwebgme_1  |[0m 2021-12-12T00:10:26.166Z - [32minfo[39m: [gme] Node version v14.18.2
+[36mwebgme_1  |[0m 2021-12-12T00:10:26.169Z - [32minfo[39m: [gme] Logfile [ info ] : /usr/app/server.log
+[36mwebgme_1  |[0m 2021-12-12T00:10:26.169Z - [32minfo[39m: [gme] Logfile [ error ] : /usr/app/server-error.log
+[36mwebgme_1  |[0m 2021-12-12T00:10:26.178Z - [32minfo[39m: [gme:server:standalone] Valid addresses of gme web server:  http://127.0.0.1:8888  http://172.24.0.3:8888
+[36mwebgme_1  |[0m (node:19) Warning: Accessing non-existent property 'padLevels' of module exports inside circular dependency
+[36mwebgme_1  |[0m (Use `node --trace-warnings ...` to show where the warning was created)
+[36mwebgme_1  |[0m 2021-12-12T00:10:26.403Z - [32minfo[39m: [gme:server:standalone:middleware:BlobServer:BlobBackend] local-storage: /usr/app/blob-local-storage
+[36mwebgme_1  |[0m 2021-12-12T00:10:26.412Z - [32minfo[39m: [gme:server:auth:gmeauth] connecting to: mongodb://mongo:27017/webgme_dcrypps
+[36mwebgme_1  |[0m 2021-12-12T00:10:26.444Z - [31merror[39m: [gme:server:auth:gmeauth] MongoError: failed to connect to server [mongo:27017] on first connect [Error: connect ECONNREFUSED 172.24.0.2:27017
+[36mwebgme_1  |[0m     at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1159:16) {
+[36mwebgme_1  |[0m   name: 'MongoError'
+[36mwebgme_1  |[0m }]
+[36mwebgme_1  |[0m 2021-12-12T00:10:26.444Z - [31merror[39m: [gme:server:standalone] Cannot start server... 
+[36mwebgme_1  |[0m {
+[36mwebgme_1  |[0m   metadata: {
+[36mwebgme_1  |[0m     name: [32m'MongoError'[39m,
+[36mwebgme_1  |[0m     message: [32m'failed to connect to server [mongo:27017] on first connect [Error: connect ECONNREFUSED 172.24.0.2:27017\n'[39m +
+[36mwebgme_1  |[0m       [32m'    at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1159:16) {\n'[39m +
+[36mwebgme_1  |[0m       [32m"  name: 'MongoError'\n"[39m +
+[36mwebgme_1  |[0m       [32m'}]'[39m
+[36mwebgme_1  |[0m   }
+[36mwebgme_1  |[0m }
+[36mwebgme_1  |[0m 
+[36mwebgme_1  |[0m > statemachinejoint@1.0.0 start /usr/app
+[36mwebgme_1  |[0m > node app.js
+[36mwebgme_1  |[0m 
+[36mwebgme_1  |[0m 2021-12-12T00:10:40.021Z - [32minfo[39m: [gme] Node version v14.18.2
+[36mwebgme_1  |[0m 2021-12-12T00:10:40.022Z - [32minfo[39m: [gme] Logfile [ info ] : /usr/app/server.log
+[36mwebgme_1  |[0m 2021-12-12T00:10:40.022Z - [32minfo[39m: [gme] Logfile [ error ] : /usr/app/server-error.log
+[36mwebgme_1  |[0m 2021-12-12T00:10:40.032Z - [32minfo[39m: [gme:server:standalone] Valid addresses of gme web server:  http://127.0.0.1:8888  http://172.24.0.3:8888
+[36mwebgme_1  |[0m (node:20) Warning: Accessing non-existent property 'padLevels' of module exports inside circular dependency
+[36mwebgme_1  |[0m (Use `node --trace-warnings ...` to show where the warning was created)
+[36mwebgme_1  |[0m 2021-12-12T00:10:40.066Z - [32minfo[39m: [gme:server:standalone:middleware:BlobServer:BlobBackend] local-storage: /usr/app/blob-local-storage
+[36mwebgme_1  |[0m 2021-12-12T00:10:40.070Z - [32minfo[39m: [gme:server:auth:gmeauth] connecting to: mongodb://mongo:27017/webgme_dcrypps
+[36mwebgme_1  |[0m 2021-12-12T00:10:40.096Z - [32minfo[39m: [gme:server:standalone:mongo] connecting to: mongodb://mongo:27017/webgme_dcrypps
+[36mwebgme_1  |[0m (node:31) Warning: Accessing non-existent property 'padLevels' of module exports inside circular dependency
+[36mwebgme_1  |[0m (Use `node --trace-warnings ...` to show where the warning was created)
+[36mwebgme_1  |[0m 2021-12-12T00:10:40.262Z - [32minfo[39m: [gme:server:standalone] Server is listening ...
+[36mwebgme_1  |[0m 2021-12-12T00:11:08.278Z - [32minfo[39m: [gme:server:worker:simpleworker:pid_31:WorkerFunctions:PluginManagerBase:plugin:PythonPlug] zmq-server listening at port 5555
+[36mwebgme_1  |[0m (node:38) Warning: Accessing non-existent property 'padLevels' of module exports inside circular dependency
+[36mwebgme_1  |[0m (Use `node --trace-warnings ...` to show where the warning was created)
+[36mwebgme_1  |[0m 2021-12-12T00:11:08.372Z - [31merror[39m: [gme:server:worker:simpleworker:pid_31:WorkerFunctions:PluginManagerBase:plugin:PythonPlug] Traceback (most recent call last):
+[36mwebgme_1  |[0m   File "/usr/app/src/plugins/PythonPlug/run_plugin.py", line 12, in <module>
+[36mwebgme_1  |[0m 
+[36mwebgme_1  |[0m 2021-12-12T00:11:08.373Z - [31merror[39m: [gme:server:worker:simpleworker:pid_31:WorkerFunctions:PluginManagerBase:plugin:PythonPlug]     from webgme_bindings import WebGME
+[36mwebgme_1  |[0m ImportError: No module named webgme_bindings
+[36mwebgme_1  |[0m 
+[36mwebgme_1  |[0m 2021-12-12T00:11:08.380Z - [31merror[39m: [gme:server:worker:simpleworker:pid_31:WorkerFunctions:PluginManagerBase:plugin:PythonPlug] Error: python /usr/app/src/plugins/PythonPlug/run_plugin.py 5555 "#6fe5ff9ca2d18b1769b0ed2df0e05c1fa22bd3b7" "master" "/k/F" "" "" exited with code 1.
+[36mwebgme_1  |[0m     at ChildProcess.<anonymous> (/usr/app/src/plugins/PythonPlug/PythonPlug.js:99:37)
+[36mwebgme_1  |[0m     at ChildProcess.emit (events.js:400:28)
+[36mwebgme_1  |[0m     at maybeClose (internal/child_process.js:1058:16)
+[36mwebgme_1  |[0m     at Process.ChildProcess._handle.onexit (internal/child_process.js:293:5)
+[36mwebgme_1  |[0m 2021-12-12T00:11:08.381Z - [31merror[39m: [gme:server:worker:simpleworker:pid_31:WorkerFunctions] plugin [PythonPlug] failed with error 
+[36mwebgme_1  |[0m {
+[36mwebgme_1  |[0m   message: [32m'python /usr/app/src/plugins/PythonPlug/run_plugin.py 5555 "#6fe5ff9ca2d18b1769b0ed2df0e05c1fa22bd3b7" "master" "/k/F" "" "" exited with code 1.'[39m,
+[36mwebgme_1  |[0m   stack: [32m'Error: python /usr/app/src/plugins/PythonPlug/run_plugin.py 5555 "#6fe5ff9ca2d18b1769b0ed2df0e05c1fa22bd3b7" "master" "/k/F" "" "" exited with code 1.\n'[39m +
+[36mwebgme_1  |[0m     [32m'    at ChildProcess.<anonymous> (/usr/app/src/plugins/PythonPlug/PythonPlug.js:99:37)\n'[39m +
+[36mwebgme_1  |[0m     [32m'    at ChildProcess.emit (events.js:400:28)\n'[39m +
+[36mwebgme_1  |[0m     [32m'    at maybeClose (internal/child_process.js:1058:16)\n'[39m +
+[36mwebgme_1  |[0m     [32m'    at Process.ChildProcess._handle.onexit (internal/child_process.js:293:5)'[39m
+[36mwebgme_1  |[0m }

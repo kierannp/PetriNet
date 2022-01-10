@@ -3,6 +3,8 @@
 ## Domain
 This project is a design studio for building and simulating petri net models. The Petri Net domain consists of places and transitions with arcs connects these two types of elements together. Petri net models can be contained within a folder.  
 
+![Vizualizer](images/Basic.gif)
+
 ## Uses
 Petri nets have been extensively used to describe discrete-event distributed systems, a class of systems that are of particular interest in computer science applications.
 
@@ -22,3 +24,5 @@ In the composistion tab on the left side of the scren is where models and folder
 ## Classifying and Simulation
 
 Once a model is created it can be simulated and classified in the PetriViz tab on the left side. To simulate the model navigate inside the model in the composition tab, then click the PetriViz tab, this pulls up the simulation of the model. Black rectangle indicate fireable transitions that will progress your model. To fire the fireable transitions double click. To classify your model hit the Classify button toward the top of the screen.  
+
+![Vizualizer](images/Vizualizer.gif)

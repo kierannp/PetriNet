@@ -335,7 +335,7 @@ define(['jointjs','css!./styles/PetriVizWidget.css'], function (joint) {
             }
         });
         Object.keys(petri.places).forEach( placeId => {
-            if (petri.places[placeId].tokens === 0){
+            if (petri.places[placeId].tokens <= 0){
                 Object.values(petri.places[placeId].transitions).forEach( transId => {
                     petri.transitions[transId].fireable = false;
                 });
@@ -357,8 +357,8 @@ define(['jointjs','css!./styles/PetriVizWidget.css'], function (joint) {
 
     PetriVizWidget.prototype._setAllStates = function () {
         const petri = this._webgmePetri;
-        const petriMap = { p2t:{}, t2p:{} }
-
+        const petriMap = { p2t:{}, t2p:{} };
+        const fireables = {};
         //decremetn places
         Object.keys(petri.places).forEach( placeId => {
             Object.values(petri.places[placeId].transitions).forEach(transId => {
@@ -382,7 +382,17 @@ define(['jointjs','css!./styles/PetriVizWidget.css'], function (joint) {
             petri.transitions[transId].fireable = true;
         });
         Object.keys(petri.places).forEach( placeId => {
-            if (petri.places[placeId].tokens === 0){
+            Object.keys(petri.places[placeId].transitions).forEach( transId => {
+                fireables[transId] = transId;
+            });
+        });
+        Object.keys(petri.transitions).forEach( transId => {
+            if (!(transId in fireables)){
+                petri.transitions[transId].fireable = false;
+            }
+        });
+        Object.keys(petri.places).forEach( placeId => {
+            if (petri.places[placeId].tokens <= 0){
                 Object.values(petri.places[placeId].transitions).forEach( transId => {
                     petri.transitions[transId].fireable = false;
                 });

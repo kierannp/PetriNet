@@ -126,6 +126,8 @@ define([
         const smNode = self._client.getNode(self._currentNodeId);
         const elementIds = smNode.getChildrenIds();
         const petri = { places:{}, transitions:{}, fireableTrans:{}};
+        const fireables = {};
+
         elementIds.forEach(elementId => {
             const node = self._client.getNode(elementId);
 
@@ -155,6 +157,16 @@ define([
         });
         
         //determine fireability of transitions
+        Object.keys(petri.places).forEach( placeId => {
+            Object.keys(petri.places[placeId].transitions).forEach( transId => {
+                fireables[transId] = transId;
+            });
+        });
+        Object.keys(petri.transitions).forEach( transId => {
+            if (!(transId in fireables)){
+                petri.transitions[transId].fireable = false;
+            }
+        });
         Object.keys(petri.places).forEach( placeId => {
             if (petri.places[placeId].tokens == 0){
                 Object.values(petri.places[placeId].transitions).forEach( transId => {
@@ -299,6 +311,16 @@ define([
         });
         this._toolbarItems.push(this.$btnClassification);
 
+        //Fire-all button
+        this.$btnResetPetri = toolBar.addButton({
+            title: 'Fire-all transitions',
+            text: 'Fire-all ',
+            icon: 'glyphicon glyphicon-fire',
+            clickFn: function (/*data*/) {
+                self._widget._setAllStates();
+            }
+        });
+        this._toolbarItems.push(this.$btnResetPetri);
         this._toolbarInitialized = true;
     };
 

@@ -1,4 +1,4 @@
-# WDeStuP
+# PetriNet Design Studio
 
 ## Domain
 This project is a design studio for building and simulating petri net models. The Petri Net domain consists of places and transitions with arcs connects these two types of elements together. Petri net models can be contained within a folder.  

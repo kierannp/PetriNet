@@ -258,6 +258,7 @@ define(['jointjs','css!./styles/PetriVizWidget.css'], function (joint) {
         const petri = this._webgmePetri
         Object.keys(places.inplaces).forEach(placeId => {
             const link = petri.places[placeId].jointArc[places.fired];
+            console.log(places);
             const linkView = link.findView(this._jointPaper);
             linkView.sendToken(joint.V('circle', { r: 5, fill: 'black' }), {duration:500});
         });
@@ -265,6 +266,24 @@ define(['jointjs','css!./styles/PetriVizWidget.css'], function (joint) {
             const link = petri.transitions[places.fired].jointArc[placeId];
             const linkView = link.findView(this._jointPaper);
             linkView.sendToken(joint.V('circle', { r: 5, fill: 'black' }), {duration:500});
+        });
+    };
+
+    PetriVizWidget.prototype.fireAllTokens = function (petriMap) {
+        const petri = this._webgmePetri
+        Object.keys(petriMap.t2p).forEach(transId => {
+            Object.keys(petriMap.t2p[transId]).forEach( placeId => {
+                const link = petri.transitions[transId].jointArc[placeId];
+                const linkView = link.findView(this._jointPaper);
+                linkView.sendToken(joint.V('circle', { r: 5, fill: 'black' }), {duration:500});
+            });
+        });
+        Object.keys(petriMap.p2t).forEach(placeId => {
+            Object.keys(petriMap.p2t[placeId]).forEach( transId => {
+                const link = petri.places[placeId].jointArc[transId];
+                const linkView = link.findView(this._jointPaper);
+                linkView.sendToken(joint.V('circle', { r: 5, fill: 'black' }), {duration:500});
+            });
         });
     };
 
@@ -284,7 +303,7 @@ define(['jointjs','css!./styles/PetriVizWidget.css'], function (joint) {
     PetriVizWidget.prototype._setState = function(firedTrans) {
         const petri = this._webgmePetri;
         const places = { inplaces:{}, outplaces:{}, fired: firedTrans }
-
+        const fireables = {};
         //decremetn places
         Object.keys(petri.places).forEach( placeId => {
             Object.values(petri.places[placeId].transitions).forEach(transId => {
@@ -306,6 +325,16 @@ define(['jointjs','css!./styles/PetriVizWidget.css'], function (joint) {
             petri.transitions[transId].fireable = true;
         });
         Object.keys(petri.places).forEach( placeId => {
+            Object.keys(petri.places[placeId].transitions).forEach( transId => {
+                fireables[transId] = transId;
+            });
+        });
+        Object.keys(petri.transitions).forEach( transId => {
+            if (!(transId in fireables)){
+                petri.transitions[transId].fireable = false;
+            }
+        });
+        Object.keys(petri.places).forEach( placeId => {
             if (petri.places[placeId].tokens === 0){
                 Object.values(petri.places[placeId].transitions).forEach( transId => {
                     petri.transitions[transId].fireable = false;
@@ -320,6 +349,53 @@ define(['jointjs','css!./styles/PetriVizWidget.css'], function (joint) {
         });
 
         this.fireTokens(places);
+        this._decorateMachine();
+        if (Object.keys(petri.fireableTrans).length == 0){
+            alert('Network is Deadlocked!');
+        }
+    };
+
+    PetriVizWidget.prototype._setAllStates = function () {
+        const petri = this._webgmePetri;
+        const petriMap = { p2t:{}, t2p:{} }
+
+        //decremetn places
+        Object.keys(petri.places).forEach( placeId => {
+            Object.values(petri.places[placeId].transitions).forEach(transId => {
+                if (petri.transitions[transId].fireable == true){
+                    petri.places[placeId].tokens -= 1;
+                    petriMap.p2t[placeId] = petri.places[placeId].transitions;
+                }
+            });
+        });
+
+        //increment places
+        Object.keys(petri.fireableTrans).forEach( transId => {
+                Object.values(petri.transitions[transId].places).forEach( placeId => {
+                    petri.places[placeId].tokens += 1;
+                    petriMap.t2p[transId] = petri.transitions[transId].places;
+                });
+        });
+
+        //determine fireability of transitions
+        Object.keys(petri.transitions).forEach( transId => {
+            petri.transitions[transId].fireable = true;
+        });
+        Object.keys(petri.places).forEach( placeId => {
+            if (petri.places[placeId].tokens === 0){
+                Object.values(petri.places[placeId].transitions).forEach( transId => {
+                    petri.transitions[transId].fireable = false;
+                });
+            }
+        });
+        petri.fireableTrans = {};
+        Object.keys(petri.transitions).forEach( transId => {
+            if (petri.transitions[transId].fireable == true){
+                petri.fireableTrans[transId] = transId;
+            }
+        });
+
+        this.fireAllTokens(petriMap);
         this._decorateMachine();
         if (Object.keys(petri.fireableTrans).length == 0){
             alert('Network is Deadlocked!');
